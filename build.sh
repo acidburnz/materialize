@@ -11,3 +11,5 @@ sass  sass/materialize.scss:bin/materialize.css
 
 echo "Build sass Min"
 sass -t compressed sass/materialize.scss:bin/materialize.min.css
+
+echo "Look at bin directory for result"
