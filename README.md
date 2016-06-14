@@ -16,5 +16,5 @@
   - **Updated Waves to 0.7.5 (js and scss)**
   - **Updated hammerjs to 2.08**
   - **Added build system to real amd load for requirejs (thanks to https://github.com/noodny/materializecss-amd)**
-  - **Juste type ./build.sh to build materializecss to /bin**
+  - **Juste type ./build.sh to build materializecss**
 
