@@ -160,7 +160,7 @@
 
           // Animate back
           setTimeout(function() {
-            if (started != true) {
+            if (started !== true) {
               newTooltip.velocity({
                 opacity: 0, marginTop: 0, marginLeft: 0}, { duration: 225, queue: false});
               backdrop.velocity({opacity: 0, scale: 1}, {
