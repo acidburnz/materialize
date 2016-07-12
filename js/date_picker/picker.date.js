@@ -1,5 +1,5 @@
 /*!
- * Date picker for pickadate.js v3.5.0
+ * Date picker for pickadate.js v3.5.6
  * http://amsul.github.io/pickadate.js/date.htm
  */
 
@@ -82,7 +82,10 @@ function DatePicker( picker, settings ) {
     // When there’s a value, set the `select`, which in turn
     // also sets the `highlight` and `view`.
     if ( valueString ) {
-        calendar.set( 'select', valueString, { format: formatString })
+        calendar.set( 'select', valueString, {
+            format: formatString,
+            defaultValue: true
+        })
     }
 
     // If there’s no value, default to highlighting “today”.
@@ -475,7 +478,7 @@ DatePicker.prototype.validate = function( type, dateObject, options ) {
     // • Not inverted and date enabled.
     // • Inverted and all dates disabled.
     // • ..and anything else.
-    if ( !options || !options.nav ) if (
+    if ( !options || (!options.nav && !options.defaultValue) ) if (
         /* 1 */ ( !isFlippedBase && calendar.disabled( dateObject ) ) ||
         /* 2 */ ( isFlippedBase && calendar.disabled( dateObject ) && ( hasEnabledWeekdays || hasEnabledBeforeTarget || hasEnabledAfterTarget ) ) ||
         /* 3 */ ( !isFlippedBase && (dateObject.pick <= minLimitObject.pick || dateObject.pick >= maxLimitObject.pick) )
@@ -644,7 +647,8 @@ DatePicker.prototype.formats = (function() {
     function getWordLengthFromCollection( string, collection, dateObject ) {
 
         // Grab the first word from the string.
-        var word = string.match( /\w+/ )[ 0 ]
+        // Regex pattern from http://stackoverflow.com/q/150033
+        var word = string.match( /[^\x00-\x7F]+|\w+/ )[ 0 ]
 
         // If there's no month index, add it to the date object
         if ( !dateObject.mm && !dateObject.m ) {
@@ -1010,7 +1014,6 @@ DatePicker.prototype.nodes = function( isOpen ) {
                     })
                 )
             ) //endreturn
-
         // Materialize modified
         })( ( settings.showWeekdaysFull ? settings.weekdaysFull : settings.weekdaysLetter ).slice( 0 ), settings.weekdaysFull.slice( 0 ) ), //tableHead
 
@@ -1040,18 +1043,18 @@ DatePicker.prototype.nodes = function( isOpen ) {
 
 
         // Create the month label.
-        //Materialize modified
+        // Materialize modified
         createMonthLabel = function(override) {
 
             var monthsCollection = settings.showMonthsShort ? settings.monthsShort : settings.monthsFull
 
-             // Materialize modified
+            // Materialize modified
             if (override == "short_months") {
               monthsCollection = settings.monthsShort;
             }
 
             // If there are months to select, add a dropdown menu.
-            if ( settings.selectMonths  && override == undefined) {
+            if ( settings.selectMonths && override == undefined ) {
 
                 return _.node( 'select',
                     _.group({
@@ -1085,7 +1088,7 @@ DatePicker.prototype.nodes = function( isOpen ) {
                     'title="' + settings.labelMonthSelect + '"'
                 )
             }
-
+          
             // Materialize modified
             if (override == "short_months")
                 if (selectedObject != null)
@@ -1136,38 +1139,37 @@ DatePicker.prototype.nodes = function( isOpen ) {
                 }
 
                 if ( settings.selectYears  && override == undefined ) {
-                    return _.node( 'select',
-                        _.group({
-                            min: lowestYear,
-                            max: highestYear,
-                            i: 1,
-                            node: 'option',
-                            item: function( loopedYear ) {
-                                return [
+                return _.node( 'select',
+                    _.group({
+                        min: lowestYear,
+                        max: highestYear,
+                        i: 1,
+                        node: 'option',
+                        item: function( loopedYear ) {
+                            return [
 
-                                    // The looped year and no classes.
-                                    loopedYear, 0,
+                                // The looped year and no classes.
+                                loopedYear, 0,
 
-                                    // Set the value and selected index.
-                                    'value=' + loopedYear + ( focusedYear == loopedYear ? ' selected' : '' )
-                                ]
-                            }
-                        }),
-                        settings.klass.selectYear + ' browser-default',
-                        ( isOpen ? '' : 'disabled' ) + ' ' + _.ariaAttr({ controls: calendar.$node[0].id + '_table' }) + ' ' +
-                        'title="' + settings.labelYearSelect + '"'
-                    )
-                }
+                                // Set the value and selected index.
+                                'value=' + loopedYear + ( focusedYear == loopedYear ? ' selected' : '' )
+                            ]
+                        }
+                    }),
+                    settings.klass.selectYear + ' browser-default',
+                    ( isOpen ? '' : 'disabled' ) + ' ' + _.ariaAttr({ controls: calendar.$node[0].id + '_table' }) + ' ' +
+                    'title="' + settings.labelYearSelect + '"'
+                )
+              }
             }
 
             // Materialize modified
             if (override == "raw")
-                return _.node( 'div', focusedYear )
+                return _.node( 'div', focusedYear )            
 
             // Otherwise just return the year focused
             return _.node( 'div', focusedYear, settings.klass.year )
         } //createYearLabel
-
 
         // Materialize modified
         createDayLabel = function() {
@@ -1175,6 +1177,8 @@ DatePicker.prototype.nodes = function( isOpen ) {
                     return _.node( 'div', selectedObject.date)
                 else return _.node( 'div', nowObject.date)
             }
+
+        // Materialize modified
         createWeekdayLabel = function() {
             var display_day;
 
@@ -1186,12 +1190,10 @@ DatePicker.prototype.nodes = function( isOpen ) {
             return weekday
         }
 
-
     // Create and return the entire calendar.
-return _.node(
-        // Date presentation View
+    return _.node(
         'div',
-            _.node(
+             _.node(
                 'div',
                 createWeekdayLabel(),
                 "picker__weekday-display"
@@ -1219,7 +1221,7 @@ return _.node(
     // Calendar container
     _.node('div',
         _.node('div',
-        ( settings.selectYears ?  createMonthLabel() + createYearLabel() : createMonthLabel() + createYearLabel() ) +
+        ( settings.selectYears ? createYearLabel() + createMonthLabel() : createMonthLabel() + createYearLabel() ) +
         createMonthNav() + createMonthNav( 1 ),
         settings.klass.header
     ) + _.node(
@@ -1311,7 +1313,6 @@ return _.node(
         })
     )
     , settings.klass.calendar_container) // end calendar
-
      +
 
     // * For Firefox forms to submit, make sure to set the buttons’ `type` attributes as “button”.
@@ -1365,6 +1366,10 @@ DatePicker.defaults = (function( prefix ) {
         clear: 'Clear',
         close: 'Close',
 
+        // Picker close behavior
+        //closeOnSelect: true,
+        //closeOnClear: true,
+
         // The format to show on the `input` element
         format: 'd mmmm, yyyy',
 
@@ -1375,7 +1380,6 @@ DatePicker.defaults = (function( prefix ) {
 
             header: prefix + 'header',
 
-
             // Materialize Added klasses
             date_display: prefix + 'date-display',
             day_display: prefix + 'day-display',
@@ -1383,8 +1387,6 @@ DatePicker.defaults = (function( prefix ) {
             year_display: prefix + 'year-display',
             calendar_container: prefix + 'calendar-container',
             // end
-
-
 
             navPrev: prefix + 'nav--prev',
             navNext: prefix + 'nav--next',
@@ -1426,5 +1428,6 @@ Picker.extend( 'pickadate', DatePicker )
 
 
 }));
+
 
 

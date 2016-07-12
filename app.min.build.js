@@ -11,6 +11,7 @@
         'collapsible': 'collapsible',
         'picker': 'date_picker/picker',
         'picker.date': 'date_picker/picker.date',
+        'picker.time': 'date_picker/picker.time',
         'dropdown': 'dropdown',
         'forms': 'forms',
         'global': 'global',
@@ -88,7 +89,7 @@
     include: ['global', 'animation', 'buttons', 'cards', 'character_counter',
         'collapsible', 'dropdown', 'forms', 'hammerjs', 'jquery.easing',
         'jquery.hammer', 'jquery.timeago', 'leanModal', 'materialbox',
-        'parallax', 'picker', 'picker.date', 'pushpin', 'scrollFire',
-        'scrollspy', 'sideNav', 'slider', 'tabs', 'toasts', 'tooltip',
-        'transitions', 'velocity', 'waves']
+        'parallax', 'picker', 'picker.date', 'picker.time', 'pushpin', 
+        'scrollFire', 'scrollspy', 'sideNav', 'slider', 'tabs', 'toasts', 
+        'tooltip', 'transitions', 'velocity', 'waves']
 })
