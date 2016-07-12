@@ -2,7 +2,7 @@
 
 ## v0.97.6-2 (Juil 12)
   - Update build system
-  - added google material icons ( font/css ) into release
+  - Added google material icons ( font/css ) into release
 
 ## v0.97.6-1 (Juin 14)
   - Updated Waves to 0.7.5 (js and scss)
