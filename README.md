@@ -3,7 +3,7 @@
 
 [Materialize](http://materializecss.com/), a CSS Framework based on material design
 
-### Current Version : v0.97.6-1
+### Current Version : v0.97.6-2
 
 ## Sass Requirements:
 - Ruby Sass 3.3+, LibSass 0.6+
@@ -12,6 +12,10 @@
 - Nodejs
 
 ## Changelog
+- v0.97.6-2 (Juil 12)
+  - Update build system
+  - added google material icons ( font/css ) into release
+
 - v0.97.6-1 (Juin 14)
   - **Updated Waves to 0.7.5 (js and scss)**
   - **Updated hammerjs to 2.08**
