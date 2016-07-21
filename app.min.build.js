@@ -53,15 +53,15 @@
         'pushpin': ['jquery'],
         'scrollFire': ['jquery', 'global'],
         'scrollspy': ['jquery'],
-        'sideNav': ['jquery'],
+        'sideNav': { deps: ['jquery', 'velocity', 'hammerjs', 'jquery.hammer'] },
         'slider': ['jquery'],
         'tabs': ['jquery'],
         'toasts': {
             deps: ['global', 'hammerjs', 'velocity'], init: function(Materialize, Hammer, Vel) {
                 window.Hammer = Hammer;
                 window.Vel = Vel;
-		}
-	},
+		    }
+	    },
         'tooltip': ['jquery'],
         'transitions': ['jquery','scrollFire'],
         'waves': { exports: 'Waves' }

@@ -36,6 +36,7 @@
     },
     shim: {
         'jquery': { exports: "$" },
+        'jquery.hammer': ['jquery', 'hammerjs', 'waves'],
         'animation': ['jquery'],
         'buttons': ['jquery'],
         'cards': ['jquery'],
@@ -45,23 +46,24 @@
         'forms': ['jquery', 'global'],
         'global': { deps: ['jquery'], exports: "Materialize" },
         'jquery.easing': ['jquery'],
-        'jquery.hammer': ['jquery', 'hammerjs', 'waves'],
         'jquery.timeago': ['jquery'],
+        'picker.date': ['jquery', 'picker'],
+        'picker.time': ['jquery', 'picker'],
         'leanModal': ['jquery'],
         'materialbox': ['jquery'],
         'parallax': ['jquery'],
         'pushpin': ['jquery'],
         'scrollFire': ['jquery', 'global'],
         'scrollspy': ['jquery'],
-        'sideNav': ['jquery'],
+        'sideNav': { deps: ['jquery', 'velocity', 'hammerjs', 'jquery.hammer'] },
         'slider': ['jquery'],
         'tabs': ['jquery'],
         'toasts': {
             deps: ['global', 'hammerjs', 'velocity'], init: function(Materialize, Hammer, Vel) {
                 window.Hammer = Hammer;
                 window.Vel = Vel;
-		}
-	},
+		    }
+	    },
         'tooltip': ['jquery'],
         'transitions': ['jquery','scrollFire'],
         'waves': { exports: 'Waves' }

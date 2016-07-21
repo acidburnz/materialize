@@ -7,14 +7,14 @@
 
     // AMD.
     if ( typeof define == 'function' && define.amd )
-        define( ['picker', 'jquery'], factory )
+        define( 'picker.time', ['picker', 'jquery'], factory );
 
     // Node.js/browserify.
     else if ( typeof exports == 'object' )
-        module.exports = factory( require('./picker.js'), require('jquery') )
+        module.exports = factory( require('picker'), require('jquery') );
 
     // Browser globals.
-    else factory( Picker, jQuery )
+    else factory( Picker, jQuery );
 
 }(function( Picker, $ ) {
 
