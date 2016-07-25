@@ -257,7 +257,9 @@ define("character_counter", ["jquery"], function(){});
 (function ($) {
   $.fn.collapsible = function(options) {
     var defaults = {
-        accordion: undefined
+      accordion: undefined,
+      onOpen: undefined,
+      onClose: undefined
     };
 
     options = $.extend(defaults, options);
@@ -272,22 +274,22 @@ define("character_counter", ["jquery"], function(){});
       var collapsible_type = $this.data("collapsible");
 
       // Turn off any existing event handlers
-       $this.off('click.collapse', '> li > .collapsible-header');
-       $panel_headers.off('click.collapse');
+      $this.off('click.collapse', '> li > .collapsible-header');
+      $panel_headers.off('click.collapse');
 
 
-       /****************
-       Helper Functions
-       ****************/
+      /****************
+      Helper Functions
+      ****************/
 
       // Accordion Open
       function accordionOpen(object) {
         $panel_headers = $this.find('> li > .collapsible-header');
         if (object.hasClass('active')) {
-            object.parent().addClass('active');
+          object.parent().addClass('active');
         }
         else {
-            object.parent().removeClass('active');
+          object.parent().removeClass('active');
         }
         if (object.parent().hasClass('active')){
           object.siblings('.collapsible-body').stop(true,false).slideDown({ duration: 350, easing: "easeOutQuart", queue: false, complete: function() {$(this).css('height', '');}});
@@ -297,31 +299,61 @@ define("character_counter", ["jquery"], function(){});
         }
 
         $panel_headers.not(object).removeClass('active').parent().removeClass('active');
-        $panel_headers.not(object).parent().children('.collapsible-body').stop(true,false).slideUp(
-          {
-            duration: 350,
-            easing: "easeOutQuart",
-            queue: false,
-            complete:
-              function() {
-                $(this).css('height', '');
-              }
-          });
+
+        // Close previously open accordion elements.
+        $panel_headers.not(object).parent().children('.collapsible-body').stop(true,false).each(function() {
+          if ($(this).is(':visible')) {
+            $(this).slideUp({
+              duration: 350,
+              easing: "easeOutQuart",
+              queue: false,
+              complete:
+                function() {
+                  $(this).css('height', '');
+                  execCallbacks($(this).siblings('.collapsible-header'));
+                }
+            });
+          }
+        });
       }
 
       // Expandable Open
       function expandableOpen(object) {
         if (object.hasClass('active')) {
-            object.parent().addClass('active');
+          object.parent().addClass('active');
         }
         else {
-            object.parent().removeClass('active');
+          object.parent().removeClass('active');
         }
         if (object.parent().hasClass('active')){
           object.siblings('.collapsible-body').stop(true,false).slideDown({ duration: 350, easing: "easeOutQuart", queue: false, complete: function() {$(this).css('height', '');}});
         }
-        else{
+        else {
           object.siblings('.collapsible-body').stop(true,false).slideUp({ duration: 350, easing: "easeOutQuart", queue: false, complete: function() {$(this).css('height', '');}});
+        }
+      }
+
+      // Open collapsible. object: .collapsible-header
+      function collapsibleOpen(object) {
+        if (options.accordion || collapsible_type === "accordion" || collapsible_type === undefined) { // Handle Accordion
+          accordionOpen(object);
+        } else { // Handle Expandables
+          expandableOpen(object);
+        }
+
+        execCallbacks(object);
+      }
+
+      // Handle callbacks
+      function execCallbacks(object) {
+        if (object.hasClass('active')) {
+          if (typeof(options.onOpen) === "function") {
+            options.onOpen.call(this, object.parent());
+          }
+        } else {
+          if (typeof(options.onClose) === "function") {
+            options.onClose.call(this, object.parent());
+          }
         }
       }
 
@@ -353,8 +385,7 @@ define("character_counter", ["jquery"], function(){});
 
       // Add click handler to only direct collapsible header children
       $this.on('click.collapse', '> li > .collapsible-header', function(e) {
-        var $header = $(this),
-            element = $(e.target);
+        var element = $(e.target);
 
         if (isChildrenOfPanelHeader(element)) {
           element = getPanelHeader(element);
@@ -362,25 +393,17 @@ define("character_counter", ["jquery"], function(){});
 
         element.toggleClass('active');
 
-        if (options.accordion || collapsible_type === "accordion" || collapsible_type === undefined) { // Handle Accordion
-          accordionOpen(element);
-        } else { // Handle Expandables
-          expandableOpen(element);
-
-          if ($header.hasClass('active')) {
-            expandableOpen($header);
-          }
-        }
+        collapsibleOpen(element);
       });
 
+
       // Open first active
-      var $panel_headers = $this.find('> li > .collapsible-header');
       if (options.accordion || collapsible_type === "accordion" || collapsible_type === undefined) { // Handle Accordion
-        accordionOpen($panel_headers.filter('.active').first());
-      }
-      else { // Handle Expandables
+        collapsibleOpen($panel_headers.filter('.active').first());
+
+      } else { // Handle Expandables
         $panel_headers.filter('.active').each(function() {
-          expandableOpen($(this));
+          collapsibleOpen($(this));
         });
       }
 
@@ -503,10 +526,16 @@ define("collapsible", ["jquery"], function(){});
         }
 
         // Check for scrolling positioned container.
-        var scrollOffset = 0;
+        var scrollYOffset = 0;
+        var scrollXOffset = 0;
         var wrapper = origin.parent();
-        if (!wrapper.is('body') && wrapper[0].scrollHeight > wrapper[0].clientHeight) {
-          scrollOffset = wrapper[0].scrollTop;
+        if (!wrapper.is('body')) {
+          if (wrapper[0].scrollHeight > wrapper[0].clientHeight) {
+            scrollYOffset = wrapper[0].scrollTop;
+          }
+          if (wrapper[0].scrollWidth > wrapper[0].clientWidth) {
+            scrollXOffset = wrapper[0].scrollLeft;
+          }
         }
 
 
@@ -547,8 +576,8 @@ define("collapsible", ["jquery"], function(){});
         // Position dropdown
         activates.css({
           position: 'absolute',
-          top: origin.position().top + verticalOffset + scrollOffset,
-          left: leftPosition
+          top: origin.position().top + verticalOffset + scrollYOffset,
+          left: leftPosition + scrollXOffset
         });
 
 

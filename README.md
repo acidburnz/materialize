@@ -12,6 +12,9 @@
 - Nodejs
 
 ## Changelog
+- **v0.97.7-1**
+  - Add back change from upstream version v0.97.7
+
 - **v0.97.6-2 (Juil 12)**
   - Update build system
   - Added google material icons ( font/css ) into release
